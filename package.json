@@ -8,7 +8,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "heroku-postbuild": "cd frontend && yarn && yarn start",
     "test": "node test.js"
   },
   "dependencies": {
