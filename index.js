@@ -59,10 +59,12 @@ app.post('/register', (req, res) => {
                     console.log(err)
 
                     res.send({
-                        message: 'Username is already taken'
+                        'message': 'Username is already taken'
                     });
                 }else {
-                    res.send('you were succ');
+                    res.send({
+                        'message': 'you were successful'
+                    });
                 }
             })
         });
