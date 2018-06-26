@@ -54,17 +54,13 @@ app.post('/register', (req, res) => {
                 req.send(err);
             }
             newUser.password = hash;
+            
             newUser.save((err) => {
                 if (err) {
                     console.log(err)
-
-                    res.send({
-                        'message': 'Username is already taken'
-                    });
+                    res.send({'message': 'Username is already taken'});
                 }else {
-                    res.send({
-                        'message': 'you were successful'
-                    });
+                    res.send({'message': 'you were successful'});
                 }
             })
         });
@@ -72,7 +68,21 @@ app.post('/register', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    console.log(req.body);
+    console.log(req.body.username);
+    console.log(req.body.password);
+    let username = req.body.username;
+    let password = req.body.password;
+
+    User.find({userName:username}, 'password', function(err, docs){
+        if(err) console.log(err);
+        console.log(docs[0]);
+        console.log(docs[0].password);
+        bcrypt.compare(password, docs[0].password, (err, res) => {
+            if(err) return(err)
+            console.log(res);
+            
+        })
+    })
     res.send({'name': 'ashton'});
 });
 
