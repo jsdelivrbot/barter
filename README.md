@@ -1,39 +1,26 @@
-# node-js-getting-started
+This project is meant to bring together people with different goods to trade and barter.
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+Please clone the directory to your local machine. And once in the directory, run ‘yarn’.
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+Making Changes
 
-## Running Locally
+When making any changes on your local machine, create a new branch to modify it. Do not make changes on the local master branch. Keep that in sync with the remote master branch. Commit on your local branch often. Also, comment your code. It will help each other. 
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
+Make a push whenever you feel you have made adequate changes and then in GitHub, submit a pull request. 
 
-```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
-$ npm install
-$ npm start
-```
+About Pull Requests
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+Make the pull request in GitHub. Do not forget to comment on what you have done, how you expect it to run, and how to test it. This is a big enough and long enough project we may have to go back at some point. If the code does not make sense, please ask questions in slack. Once the request is reviewed, accepted and merged, delete the branch.
 
-## Deploying to Heroku
+Pulling From Remote
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-or
+You should do a ‘git pull origin master’ in three instances.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+Every time a PR is accepted and merged.
+Anytime you switch to a new branch. 
+Anytime you are starting up work again, whatever branch it may be. 
 
-## Documentation
+Do not fall behind on pulls because it will create merge conflicts
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
 
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
+
