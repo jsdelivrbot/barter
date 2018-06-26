@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 
 const Schema = mongoose.Schema;
@@ -22,7 +23,7 @@ db.once('open', function() {
 });
 
 const userSchema = new Schema({
-    userName: {type: String, required: true},
+    userName: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     items: [{
         itemName: String,
@@ -31,32 +32,47 @@ const userSchema = new Schema({
     }]
 })
 
+
 const User = mongoose.model('User', userSchema)
-
-
 
 app.get('/', (req, res) => {
     res.send('hello');
 })
 
 app.post('/register', (req, res) => {
-    const inputUserName = req.body.username;
+    const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
-    let user = new User({userName: inputUserName, password: inputPassword})
-// user.save((err) => {
-//     if (err) {
-//         return handleError(err)
-//     }else {
-//         console.log('Successfully added user');
-//     }
-// })
+    let newUser = new User({
+        userName: inputUsername, 
+        password: inputPassword
+    })
+
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, function(err, hash) {
+            if(err) {
+                req.send(err);
+            }
+            newUser.password = hash;
+            newUser.save((err) => {
+                if (err) {
+                    console.log(err)
+
+                    res.send({
+                        message: 'Username is already taken'
+                    });
+                }else {
+                    res.send('you were successful');
+                }
+            })
+        });
+    })
 })
 
 app.post('/login', (req, res) => {
     console.log(req.body);
     res.send({'name': 'ashton'});
-})
+});
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Express server listening");
