@@ -62,7 +62,7 @@ app.post('/register', (req, res) => {
                         message: 'Username is already taken'
                     });
                 }else {
-                    res.send('you were successful');
+                    res.send({message: 'you were successful'});
                 }
             })
         });
