@@ -33,7 +33,17 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema)
 
-let user = new User({userName: 'Colin', password: 'password'})
+
+
+app.get('/', (req, res) => {
+    res.send('hello');
+})
+
+app.post('/register', (req, res) => {
+    const inputUserName = req.body.username;
+    const inputPassword = req.body.password;
+
+    let user = new User({userName: inputUserName, password: inputPassword})
 // user.save((err) => {
 //     if (err) {
 //         return handleError(err)
@@ -41,14 +51,11 @@ let user = new User({userName: 'Colin', password: 'password'})
 //         console.log('Successfully added user');
 //     }
 // })
-
-app.get('/', (req, res) => {
-    res.send('hello');
 })
 
 app.post('/login', (req, res) => {
-    console.log(req.body)
-    res.send('got it yeah');
+    console.log(req.body);
+    res.send({'name': 'ashton'});
 })
 
 app.listen(process.env.PORT || 5000, () => {
