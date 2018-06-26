@@ -1,5 +1,7 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
 
 const Schema = mongoose.Schema;
 
@@ -9,6 +11,9 @@ const DB_URI = 'ds219191.mlab.com:19191';
 const dbName = 'barter-mac';
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true}))
+app.use(bodyParser.json());
+
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -29,13 +34,13 @@ const userSchema = new Schema({
 const User = mongoose.model('User', userSchema)
 
 let user = new User({userName: 'Colin', password: 'password'})
-user.save((err) => {
-    if (err) {
-        return handleError(err)
-    }else {
-        console.log('Successfully added user');
-    }
-})
+// user.save((err) => {
+//     if (err) {
+//         return handleError(err)
+//     }else {
+//         console.log('Successfully added user');
+//     }
+// })
 
 app.get('/', (req, res) => {
     res.send('hello');
@@ -43,7 +48,7 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req, res) => {
     console.log(req.body)
-    res.send('got it');
+    res.send('got it yeah');
 })
 
 app.listen(process.env.PORT || 5000, () => {
