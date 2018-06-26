@@ -37,8 +37,13 @@ user.save((err) => {
     }
 })
 
-app.get('/people', (req, res) => {
+app.get('/', (req, res) => {
     res.send('hello');
+})
+
+app.post('/login', (req, res) => {
+    console.log(req.body)
+    res.send('got it');
 })
 
 app.listen(process.env.PORT || 5000, () => {
