@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 const Schema = mongoose.Schema;
@@ -78,12 +79,21 @@ app.post('/login', (req, res) => {
         console.log(docs[0]);
         console.log(docs[0].password);
         bcrypt.compare(password, docs[0].password, (err, res) => {
-            if(err) return(err)
-            console.log(res);
+            if(err) {
+                return(err);
+            } else {
+                jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
+                    if(err) {
+                        res.send({err})
+                    } else {
+                        console.log('Token', token);
+                        res.send({token})
+                    }
+                })
+            }
             
         })
     })
-    res.send({'name': 'ashton'});
 });
 
 app.listen(process.env.PORT || 5000, () => {
