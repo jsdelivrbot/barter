@@ -81,16 +81,14 @@ app.post('/login', (req, response) => {
                 else {console.log('bad')}
                 jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                     if(err) {
-                        response.send(err)
+                        response.send(err);
                     } else {
                         response.send(token);
                     }
                 })
             }
-            
         })
     })
-  
 });
 
 app.listen(process.env.PORT || 5000, () => {
