@@ -80,10 +80,9 @@ app.post('/login', (req, response) => {
                 if(result) {console.log('let them in')}
                 else {console.log('bad')}
                 jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
-                    if(err) {
-                        response.send(err);
+                    if(err) {response.send(err);
                     } else {
-                        response.send(token);
+                        response.send(JSON.stringify({'token': token}));
                     }
                 })
             }
