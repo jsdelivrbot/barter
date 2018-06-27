@@ -68,32 +68,29 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.post('/login', (req, res) => {
-    console.log(req.body.username);
-    console.log(req.body.password);
+app.post('/login', (req, response) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    User.find({userName:username}, 'password', function(err, docs){
+    User.find({userName:username}, 'userName password', function(err, docs){
         if(err) console.log(err);
-        console.log(docs[0]);
-        console.log(docs[0].password);
-        bcrypt.compare(password, docs[0].password, (err, res) => {
-            if(err) {
-                return(err);
-            } else {
+        bcrypt.compare(password, docs[0].password, (err, result) => {
+            if(err) return(err);    
+            else {
+                if(result) {console.log('let them in')}
+                else {console.log('bad')}
                 jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                     if(err) {
-                        res.send({err})
+                        response.send(err)
                     } else {
-                        console.log('Token', token);
-                        res.send({token})
+                        response.send(token);
                     }
                 })
             }
             
         })
     })
+  
 });
 
 app.listen(process.env.PORT || 5000, () => {
