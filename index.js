@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 const Schema = mongoose.Schema;
@@ -51,29 +52,42 @@ app.post('/register', (req, res) => {
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function(err, hash) {
             if(err) {
-                req.send(err);
+                res.send(err);
             }
             newUser.password = hash;
+            
             newUser.save((err) => {
                 if (err) {
                     console.log(err)
-
-                    res.send({
-                        'message': 'Username is already taken'
-                    });
+                    res.send(JSON.stringify({'message': 'Username is already taken'}));
                 }else {
-                    res.send({
-                        'message': 'you were successful'
-                    });
+                    res.send(JSON.stringify({'message': 'you were successful'}));
                 }
             })
         });
     })
 })
 
-app.post('/login', (req, res) => {
-    console.log(req.body);
-    res.send({'name': 'ashton'});
+app.post('/login', (req, response) => {
+    let username = req.body.username;
+    let password = req.body.password;
+
+    User.find({userName:username}, 'userName password', function(err, docs){
+        if(err) console.log(err);
+        bcrypt.compare(password, docs[0].password, (err, result) => {
+            if(err) return(err);    
+            else {
+                if(result) {console.log('let them in')}
+                else {console.log('bad')}
+                jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
+                    if(err) {response.send(err);
+                    } else {
+                        response.send(JSON.stringify({'token': token}));
+                    }
+                })
+            }
+        })
+    })
 });
 
 app.listen(process.env.PORT || 5000, () => {
