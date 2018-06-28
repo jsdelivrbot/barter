@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors')
 
 
 const Schema = mongoose.Schema;
@@ -15,7 +16,7 @@ const dbName = 'barter-mac';
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
-// app.use(express.json());
+app.use(cors());
 
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
@@ -42,6 +43,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+    console.log(req.headers["content-type"])
     console.log(req.body);
     // try{req.body = JSON.parse(Object.keys(req.body)[0])}catch(err){req.body = req.body}
     const inputUsername = req.body.username;
