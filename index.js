@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors')
 
-
 const Schema = mongoose.Schema;
 
 const DB_USER = 'admin';
@@ -43,8 +42,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    console.log(req.headers["content-type"])
-    console.log(req.body);
     // try{req.body = JSON.parse(Object.keys(req.body)[0])}catch(err){req.body = req.body}
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -69,6 +66,8 @@ app.post('/register', (req, res) => {
                     res.send(JSON.stringify({'message': 'you were successful'}));
                 }
             })
+            const token = jwt.sign({ user: 'user' }, 'secret');
+            console.log(token);
         });
     })
 })
