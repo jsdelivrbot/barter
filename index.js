@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage }).single('myImage');
+const upload = multer({ storage: storage }).single('myFile');
 
 const Schema = mongoose.Schema;
 
@@ -99,6 +99,20 @@ app.post('/login', (req, response) => {
         })
     })
 });
+
+app.post('/upload', (req, res) => {
+    upload(req, res, (err) => {
+        if(err){
+            console.log('Error', err);
+            res.send(err);
+        }
+        else {
+            console.log(req.file);
+            res.send('test');
+        }
+    })
+    
+})
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Express server listening");
