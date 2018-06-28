@@ -13,8 +13,9 @@ const DB_URI = 'ds219191.mlab.com:19191';
 const dbName = 'barter-mac';
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true}))
+app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
+// app.use(express.json());
 
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
@@ -41,6 +42,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+    console.log(req.body);
+    // try{req.body = JSON.parse(Object.keys(req.body)[0])}catch(err){req.body = req.body}
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
