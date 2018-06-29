@@ -3,7 +3,23 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cors = require('cors')
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json());
+app.use(cors());
+
+const storage = multer.diskStorage({
+    destination: './uploads',
+    filename: function(req, file, cb){
+        cb(null, file.filename + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage }).single('myFile');
 
 const Schema = mongoose.Schema;
 
@@ -12,10 +28,7 @@ const DB_PASSWORD = '9323Kenzie';
 const DB_URI = 'ds219191.mlab.com:19191';
 const dbName = 'barter-mac';
 
-const app = express();
-app.use(bodyParser.urlencoded({ extended: false}))
-app.use(bodyParser.json());
-app.use(cors());
+
 
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
@@ -96,6 +109,19 @@ app.post('/login', (req, response) => {
 
     })
 });
+
+app.post('/upload', (req, res) => {
+    upload(req, res, (err) => {
+        if(err){
+            console.log(err);
+            res.send(err);
+        }
+        else {
+            console.log(req.file);
+            res.send('test');
+        }
+    })
+})
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Express server listening");
