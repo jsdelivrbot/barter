@@ -79,7 +79,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    // try{req.body = JSON.parse(Object.keys(req.body)[0])}catch(err){req.body = req.body}
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
@@ -124,7 +123,7 @@ app.post('/login', (req, response) => {
                     jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                         if(err) {response.send(err);
                         } else {
-                            response.send(JSON.stringify({'token': token}));
+                            response.send(JSON.stringify({'token': token, 'success': true}));
                         }
                     })
                 }
