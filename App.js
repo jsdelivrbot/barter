@@ -67,6 +67,7 @@ const userSchema = new Schema({
     items: [{
         itemName: String,
         imageURL: String,
+        timestamp: Number,
         description: String,
     }]
 })
@@ -135,16 +136,8 @@ app.post('/login', (req, response) => {
 });
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
-    upload(req, res, (err) => {
-        if(err){
-            console.log(err);
-            res.send(err);
-        }
-        else {
-            console.log(req.file);
-            res.send('test');
-        }
-    })
+    console.log(req.file);
+    res.end();
 })
 
 app.listen(process.env.PORT || 5000, () => {
