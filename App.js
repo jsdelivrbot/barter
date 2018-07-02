@@ -34,6 +34,7 @@ var s3 = new AWS.S3({
  secretAccessKey: IAM_USER_SECRET,
  Bucket: BUCKET_NAME
 })
+
 // Adding the uploaded photos to our Amazon S3  bucket
 var imageUpload = multer({
  storage: multerS3({
@@ -80,7 +81,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    // try{req.body = JSON.parse(Object.keys(req.body)[0])}catch(err){req.body = req.body}
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
@@ -104,8 +104,6 @@ app.post('/register', (req, res) => {
                     res.send(JSON.stringify({'message': 'you were successful'}));
                 }
             })
-            const token = jwt.sign({ user: 'user' }, 'secret');
-            console.log(token);
         });
     })
 })
@@ -125,7 +123,7 @@ app.post('/login', (req, response) => {
                     jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                         if(err) {response.send(err);
                         } else {
-                            response.send(JSON.stringify({'token': token}));
+                            response.send(JSON.stringify({'token': token, 'success': true}));
                         }
                     })
                 }
