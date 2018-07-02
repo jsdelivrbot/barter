@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
@@ -20,6 +22,28 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage }).single('myFile');
+
+
+//variables used to access amazon cloud bucket
+const BUCKET_NAME = 'barter-image-bucket';
+const IAM_USER_KEY = 'AKIAJIYJ2K33UMOAUALQ';
+const IAM_USER_SECRET = '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';
+
+var s3 = new AWS.S3({
+ accessKeyId: IAM_USER_KEY,
+ secretAccessKey: IAM_USER_SECRET,
+ Bucket: BUCKET_NAME
+})
+// Adding the uploaded photos to our Amazon S3  bucket
+var imageUpload = multer({
+ storage: multerS3({
+   s3: s3,
+   bucket: 'barter-image-bucket',
+   metadata: function (req, file, cb) {
+     cb(null, Object.assign({}, req.body))
+   }
+ })
+});
 
 const Schema = mongoose.Schema;
 
@@ -110,7 +134,7 @@ app.post('/login', (req, response) => {
     })
 });
 
-app.post('/upload', (req, res) => {
+app.post('/upload', imageUpload.single('myFile'), (req, res) => {
     upload(req, res, (err) => {
         if(err){
             console.log(err);
