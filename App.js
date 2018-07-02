@@ -34,6 +34,7 @@ var s3 = new AWS.S3({
  secretAccessKey: IAM_USER_SECRET,
  Bucket: BUCKET_NAME
 })
+
 // Adding the uploaded photos to our Amazon S3  bucket
 var imageUpload = multer({
  storage: multerS3({
