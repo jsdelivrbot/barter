@@ -102,8 +102,6 @@ app.post('/register', (req, res) => {
                     res.send(JSON.stringify({'message': 'you were successful'}));
                 }
             })
-            const token = jwt.sign({ user: 'user' }, 'secret');
-            console.log(token);
         });
     })
 })
