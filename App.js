@@ -8,20 +8,13 @@ const multer = require('multer');
 const path = require('path');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
+const expressValidator = require('express-validator');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
+app.use(expressValidator());
 app.use(cors());
-
-const storage = multer.diskStorage({
-    destination: './uploads',
-    filename: function(req, file, cb){
-        cb(null, file.filename + '-' + Date.now() + path.extname(file.originalname))
-    }
-})
-
-const upload = multer({ storage: storage }).single('myFile');
 
 
 //variables used to access amazon cloud bucket
@@ -68,16 +61,13 @@ const userSchema = new Schema({
     items: [{
         itemName: String,
         imageURL: String,
+        timestamp: Number,
         description: String,
-    }]
+    }],
 })
 
 
 const User = mongoose.model('User', userSchema)
-
-app.get('/', (req, res) => {
-    res.send('hello');
-})
 
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
@@ -128,21 +118,41 @@ app.post('/login', (req, response) => {
                 }
             })
         }
-
     })
 });
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
-    upload(req, res, (err) => {
-        if(err){
-            console.log(err);
-            res.send(err);
-        }
-        else {
-            console.log(req.file);
-            res.send('test');
-        }
+
+    // Need to grab username, description, file location, file original name
+
+    const userSubmitting = req.body.user;
+    const imageLocation = req.file.location;
+    const imageDescription = req.body.description;
+    const imageName = req.file.originalname.replace(/\.[^/.]+$/, "");
+    console.log(userSubmitting, imageLocation, imageDescription, imageName);
+
+
+    User.findOneAndUpdate({userName: userSubmitting}, {$push: {"items": {
+        itemName: imageName,
+        imageURL: imageLocation,
+        timestamp: Date.now(),
+        description: imageDescription 
+    }}}, {safe: true, upsert: true, new: true}, function(err, model) {
+        console.log(err);
     })
+
+    // Book.findOneAndUpdate({ "_id": bookId }, { "$set": { "name": name, "genre": genre, "author": author, "similar": similar}}).exec(function(err, book){
+    //     if(err) {
+    //         console.log(err);
+    //         res.status(500).send(err);
+    //     } else {
+    //              res.status(200).send(book);
+    //     }
+    //  });
+
+
+
+    res.send();
 })
 
 app.listen(process.env.PORT || 5000, () => {
