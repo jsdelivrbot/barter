@@ -9,19 +9,11 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const expressValidator = require('express-validator');
-const expressSession = require('express-session');
-const livereload = require('connect-livereload');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
 app.use(expressValidator());
-app.use(expressSession({
-    secret: 'max', 
-    saveUninitialized: false, 
-    resave: false,
-}))
-// app.use(livereload());
 app.use(cors());
 
 
@@ -117,15 +109,6 @@ app.post('/login', (req, response) => {
             bcrypt.compare(password, docs[0].password, (err, result) => {
                 if(err) response.send(err);    
                 if(result) {
-                    console.log('finding the username', docs[0].userName);
-                    req.session.username = docs[0].userName;
-                    req.session.save((err) => {
-                        if (err) {
-                            console.log('session save error')
-                        } else {
-                            console.log(req.session);
-                        }
-                    })
                     jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                         if(err) {response.send(err);
                         } else {
@@ -139,10 +122,36 @@ app.post('/login', (req, response) => {
 });
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
-   
-    console.log(req.file);
-    console.log(req.body);
-    console.log(req.session);
+
+    // Need to grab username, description, file location, file original name
+
+    const userSubmitting = req.body.user;
+    const imageLocation = req.file.location;
+    const imageDescription = req.body.description;
+    const imageName = req.file.originalname.replace(/\.[^/.]+$/, "");
+    console.log(userSubmitting, imageLocation, imageDescription, imageName);
+
+
+    User.findOneAndUpdate({userName: userSubmitting}, {$push: {"items": {
+        itemName: imageName,
+        imageURL: imageLocation,
+        timestamp: Date.now(),
+        description: imageDescription 
+    }}}, {safe: true, upsert: true, new: true}, function(err, model) {
+        console.log(err);
+    })
+
+    // Book.findOneAndUpdate({ "_id": bookId }, { "$set": { "name": name, "genre": genre, "author": author, "similar": similar}}).exec(function(err, book){
+    //     if(err) {
+    //         console.log(err);
+    //         res.status(500).send(err);
+    //     } else {
+    //              res.status(200).send(book);
+    //     }
+    //  });
+
+
+
     res.send();
 })
 
