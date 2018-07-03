@@ -8,20 +8,21 @@ const multer = require('multer');
 const path = require('path');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
+const expressValidator = require('express-validator');
+const expressSession = require('express-session');
+const livereload = require('connect-livereload');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json());
+app.use(expressValidator());
+app.use(expressSession({
+    secret: 'max', 
+    saveUninitialized: false, 
+    resave: false,
+}))
+app.use(livereload());
 app.use(cors());
-
-const storage = multer.diskStorage({
-    destination: './uploads',
-    filename: function(req, file, cb){
-        cb(null, file.filename + '-' + Date.now() + path.extname(file.originalname))
-    }
-})
-
-const upload = multer({ storage: storage }).single('myFile');
 
 
 //variables used to access amazon cloud bucket
@@ -76,10 +77,6 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema)
 
-app.get('/', (req, res) => {
-    res.send('hello');
-})
-
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -120,6 +117,15 @@ app.post('/login', (req, response) => {
             bcrypt.compare(password, docs[0].password, (err, result) => {
                 if(err) response.send(err);    
                 if(result) {
+                    console.log('finding the username', docs[0].userName);
+                    req.session.username = docs[0].userName;
+                    req.session.save((err) => {
+                        if (err) {
+                            console.log('session save error')
+                        } else {
+                            console.log(req.session);
+                        }
+                    })
                     jwt.sign({password: docs[0].password}, 'secretkey', (err, token) => {
                         if(err) {response.send(err);
                         } else {
@@ -129,13 +135,14 @@ app.post('/login', (req, response) => {
                 }
             })
         }
-
     })
 });
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
-    console.log(req.file);
-    res.end();
+   
+    // console.log(req.file);
+    console.log(req.session);
+    res.send();
 })
 
 app.listen(process.env.PORT || 5000, () => {
