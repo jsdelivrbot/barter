@@ -21,7 +21,7 @@ app.use(expressSession({
     saveUninitialized: false, 
     resave: false,
 }))
-app.use(livereload());
+// app.use(livereload());
 app.use(cors());
 
 
@@ -71,7 +71,7 @@ const userSchema = new Schema({
         imageURL: String,
         timestamp: Number,
         description: String,
-    }]
+    }],
 })
 
 
@@ -140,7 +140,8 @@ app.post('/login', (req, response) => {
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
    
-    // console.log(req.file);
+    console.log(req.file);
+    console.log(req.body);
     console.log(req.session);
     res.send();
 })
