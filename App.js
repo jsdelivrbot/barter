@@ -141,18 +141,16 @@ app.post('/upload', imageUpload.single('myFile'), (req, res) => {
         console.log(err);
     })
 
-    // Book.findOneAndUpdate({ "_id": bookId }, { "$set": { "name": name, "genre": genre, "author": author, "similar": similar}}).exec(function(err, book){
-    //     if(err) {
-    //         console.log(err);
-    //         res.status(500).send(err);
-    //     } else {
-    //              res.status(200).send(book);
-    //     }
-    //  });
-
-
-
     res.send();
+})
+
+app.get('/images', (req, res) => {
+    console.log('hello');
+
+    User.find({}, 'userName items', (err, users) => {
+        if(err) console.log(err);
+        else {res.send(users);}
+    })
 })
 
 app.listen(process.env.PORT || 5000, () => {
