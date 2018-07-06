@@ -40,7 +40,6 @@ var imageUpload = multer({
 
 const Schema = mongoose.Schema;
 
-
 const DB_USER = 'admin';
 const DB_PASSWORD = '9323Kenzie';
 const DB_URI = 'ds219191.mlab.com:19191';
@@ -59,9 +58,13 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     items: [{
         itemName: String,
+        imageName: String,
         imageURL: String,
         timestamp: Number,
         description: String,
+        comments: [{
+            type: String
+        }]
     }],
 })
 
@@ -76,8 +79,6 @@ app.post('/register', (req, res) => {
         userName: inputUsername,
         password: inputPassword
     })
-    // console.log(newUser);
-    // res.send(newUser);
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
@@ -113,8 +114,7 @@ app.post('/login', (req, response) => {
                 if (err) response.send(err);
                 if (result) {
                     jwt.sign({ password: docs[0].password }, 'secretkey', (err, token) => {
-                        if (err) {
-                            response.send(err);
+                        if (err) { response.send(err);
                         } else {
                             response.send(JSON.stringify({ 'token': token, 'success': true }));
                         }
@@ -127,16 +127,20 @@ app.post('/login', (req, response) => {
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
 
+    console.log(req.body.itemName);
+
     const userSubmitting = req.body.user;
     const imageLocation = req.file.location;
     const imageDescription = req.body.description;
     const imageName = req.file.originalname.replace(/\.[^/.]+$/, "");
+    const itemName = req.body.itemName;
 
 
     User.findOneAndUpdate({ userName: userSubmitting }, {
         $push: {
             "items": {
-                itemName: imageName,
+                itemName,
+                imageName: imageName,
                 imageURL: imageLocation,
                 timestamp: Date.now(),
                 description: imageDescription
