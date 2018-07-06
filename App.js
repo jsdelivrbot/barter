@@ -160,6 +160,10 @@ app.get('/images', (req, res) => {
     })
 })
 
+app.get('/get', (req, res) => {
+    res.send('hello');
+})
+
 app.listen(process.env.PORT || 5000, () => {
     console.log("Express server listening");
 });
