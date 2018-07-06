@@ -76,6 +76,8 @@ app.post('/register', (req, res) => {
         userName: inputUsername,
         password: inputPassword
     })
+    console.log(newUser);
+    res.send(newUser);
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
