@@ -71,14 +71,6 @@ app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
-    req.check('username').isEmpty();
-    req.check('password').isEmpty();
-
-    const errors = req.validationErrors();
-    if (errors) {
-        res.send('Username/password cannot be empty');
-    }
-
     let newUser = new User({
         userName: inputUsername,
         password: inputPassword
@@ -88,17 +80,19 @@ app.post('/register', (req, res) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
             if (err) {
                 res.send(err);
-            }
-            newUser.password = hash;
+            } else {
+                newUser.password = hash;
 
-            newUser.save((err) => {
-                if (err) {
-                    console.log(err)
-                    res.send(JSON.stringify({ 'message': 'Username is already taken' }));
-                } else {
-                    res.send(JSON.stringify({ 'message': 'you were successful' }));
-                }
-            })
+                newUser.save((err) => {
+                    if (err) {
+                        console.log(err)
+                        res.send(JSON.stringify({ 'message': 'Username is already taken' }));
+                    } else {
+                        res.send(JSON.stringify({ 'message': 'you were successful' }));
+                    }
+                })
+            }
+
         });
     })
 })
