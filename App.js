@@ -40,6 +40,7 @@ var imageUpload = multer({
 
 const Schema = mongoose.Schema;
 
+
 const DB_USER = 'admin';
 const DB_PASSWORD = '9323Kenzie';
 const DB_URI = 'ds219191.mlab.com:19191';
@@ -71,34 +72,30 @@ app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
 
-    req.check('username').isEmpty();
-    req.check('password').isEmpty();
-
-    const errors = req.validationErrors();
-    if (errors) {
-        res.send('Username/password cannot be empty');
-    }
-
     let newUser = new User({
         userName: inputUsername,
         password: inputPassword
     })
+    // console.log(newUser);
+    // res.send(newUser);
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
             if (err) {
                 res.send(err);
-            }
-            newUser.password = hash;
+            } else {
+                newUser.password = hash;
 
-            newUser.save((err) => {
-                if (err) {
-                    console.log(err)
-                    res.send(JSON.stringify({ 'message': 'Username is already taken' }));
-                } else {
-                    res.send(JSON.stringify({ 'message': 'you were successful' }));
-                }
-            })
+                newUser.save((err) => {
+                    if (err) {
+                        console.log(err)
+                        res.send(JSON.stringify({ 'message': 'Username is already taken' }));
+                    } else {
+                        res.send(JSON.stringify({ 'message': 'you were successful' }));
+                    }
+                })
+            }
+
         });
     })
 })
