@@ -18,8 +18,8 @@ app.use(cors());
 
 //variables used to access amazon cloud bucket
 const BUCKET_NAME = 'barter-image-bucket';
-const IAM_USER_KEY = 'AKIAJIYJ2K33UMOAUALQ';
-const IAM_USER_SECRET = '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';
+const IAM_USER_KEY = 'AKIAIFQ3M3GFLI33RX5A';
+const IAM_USER_SECRET = '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';
 
 var s3 = new AWS.S3({
     accessKeyId: IAM_USER_KEY,
