@@ -160,7 +160,7 @@ app.get('/images', (req, res) => {
     })
 })
 
-app.get('/get', (req, res) => {
+app.get('/', (req, res) => {
     res.send('hello');
 })
 
