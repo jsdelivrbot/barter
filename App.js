@@ -8,6 +8,7 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const expressValidator = require('express-validator');
+const User = require('./models/User');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -38,36 +39,16 @@ var imageUpload = multer({
     })
 });
 
-const Schema = mongoose.Schema;
+
+// DB config and setup
+const db = require('./config/keys').mongoURI;
+
+mongoose.connect(db)
+    .then(() => console.log('MongoDB connected...'))
+    .catch(err => console.log(err));
 
 
-const DB_USER = 'admin';
-const DB_PASSWORD = '9323Kenzie';
-const DB_URI = 'ds219191.mlab.com:19191';
-const dbName = 'barter-mac';
-
-
-mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-    console.log('Connected to the database');
-});
-
-const userSchema = new Schema({
-    userName: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    items: [{
-        itemName: String,
-        imageURL: String,
-        timestamp: Number,
-        description: String,
-    }],
-})
-
-
-const User = mongoose.model('User', userSchema)
-
+// API Routes
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -76,8 +57,6 @@ app.post('/register', (req, res) => {
         userName: inputUsername,
         password: inputPassword
     })
-    // console.log(newUser);
-    // res.send(newUser);
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
