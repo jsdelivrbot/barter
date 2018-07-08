@@ -39,7 +39,6 @@ var imageUpload = multer({
     })
 });
 
-
 // DB config and setup
 const db = require('./config/keys').mongoURI;
 
@@ -48,7 +47,7 @@ mongoose.connect(db)
     .catch(err => console.log(err));
 
 
-// API Routes
+
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -92,8 +91,7 @@ app.post('/login', (req, response) => {
                 if (err) response.send(err);
                 if (result) {
                     jwt.sign({ password: docs[0].password }, 'secretkey', (err, token) => {
-                        if (err) {
-                            response.send(err);
+                        if (err) { response.send(err);
                         } else {
                             response.send(JSON.stringify({ 'token': token, 'success': true }));
                         }
@@ -106,16 +104,20 @@ app.post('/login', (req, response) => {
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
 
+    console.log(req.body.itemName);
+
     const userSubmitting = req.body.user;
     const imageLocation = req.file.location;
     const imageDescription = req.body.description;
     const imageName = req.file.originalname.replace(/\.[^/.]+$/, "");
+    const itemName = req.body.itemName;
 
 
     User.findOneAndUpdate({ userName: userSubmitting }, {
         $push: {
             "items": {
-                itemName: imageName,
+                itemName,
+                imageName: imageName,
                 imageURL: imageLocation,
                 timestamp: Date.now(),
                 description: imageDescription
