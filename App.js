@@ -48,7 +48,6 @@ mongoose.connect(db)
 
 
 
-<<<<<<< HEAD
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -73,8 +72,6 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema)
 
-=======
->>>>>>> 6cf1f585960ffc6d0fea68d9e1b99efa1ad21cfd
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
