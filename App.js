@@ -62,6 +62,9 @@ const userSchema = new Schema({
         imageURL: String,
         timestamp: Number,
         description: String,
+        comments: [{
+            type: String
+        }]
     }],
 })
 
@@ -76,8 +79,6 @@ app.post('/register', (req, res) => {
         userName: inputUsername,
         password: inputPassword
     })
-    // console.log(newUser);
-    // res.send(newUser);
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
@@ -95,7 +96,6 @@ app.post('/register', (req, res) => {
                     }
                 })
             }
-
         });
     })
 })
@@ -154,6 +154,24 @@ app.get('/images', (req, res) => {
     User.find({}, 'userName items', (err, users) => {
         if (err) console.log(err);
         else { res.send(users); }
+    })
+})
+
+app.post('/comment', (req, res) => {
+    const itemsUser = req.body.itemsUser;
+    const itemID = req.body.itemID;
+    const comment = req.body.comment;
+
+    User.findOne({
+        userName: itemsUser,
+        'items._id': req.body.itemID
+    }).then((user) => {
+        const item = user.items.find(((elem) => {
+            return elem._id.toString() === itemID;
+        }))
+        item.comments.push(comment);
+        user.save()
+            .then(res.send(user))
     })
 })
 
