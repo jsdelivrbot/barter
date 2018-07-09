@@ -8,7 +8,8 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const expressValidator = require('express-validator');
-const User = require('./models/User');
+
+// const User = require('./models/User');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -39,14 +40,10 @@ var imageUpload = multer({
     })
 });
 
-// DB config and setup
-const db = require('./config/keys').mongoURI;
-
-mongoose.connect(db)
-    .then(() => console.log('MongoDB connected...'))
-    .catch(err => console.log(err));
-
-
+const DB_USER = 'admin';
+const DB_PASSWORD = '9323Kenzie';
+const DB_URI = 'ds219191.mlab.com:19191';
+const dbName = 'barter-mac';
 
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
@@ -54,6 +51,9 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log('Connected to the database');
 });
+
+const Schema = mongoose.Schema;
+
 
 const userSchema = new Schema({
     userName: { type: String, required: true, unique: true },
