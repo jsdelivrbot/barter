@@ -19,9 +19,9 @@ app.use(cors());
 
 
 //variables used to access amazon cloud bucket
-const BUCKET_NAME = 'barter-image-bucket';
-const IAM_USER_KEY = 'AKIAIFQ3M3GFLI33RX5A';
-const IAM_USER_SECRET = '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';
+const BUCKET_NAME = 'barter-images';
+const IAM_USER_KEY = 'AKIAIAIQOLFN765JL3CQ';
+const IAM_USER_SECRET = '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';
 
 var s3 = new AWS.S3({
     accessKeyId: IAM_USER_KEY,
@@ -33,7 +33,7 @@ var s3 = new AWS.S3({
 var imageUpload = multer({
     storage: multerS3({
         s3: s3,
-        bucket: 'barter-image-bucket',
+        bucket: 'barter-images',
         metadata: function (req, file, cb) {
             cb(null, Object.assign({}, req.body))
         }
