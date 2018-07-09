@@ -48,6 +48,33 @@ mongoose.connect(db)
 
 
 
+<<<<<<< HEAD
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+    console.log('Connected to the database');
+});
+
+const userSchema = new Schema({
+    userName: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    items: [{
+        itemName: String,
+        imageURL: String,
+        timestamp: Number,
+        description: String,
+        comments: [{
+            type: String
+        }]
+    }],
+})
+
+
+const User = mongoose.model('User', userSchema)
+
+=======
+>>>>>>> 6cf1f585960ffc6d0fea68d9e1b99efa1ad21cfd
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -73,7 +100,6 @@ app.post('/register', (req, res) => {
                     }
                 })
             }
-
         });
     })
 })
@@ -135,6 +161,24 @@ app.get('/images', (req, res) => {
     User.find({}, 'userName items', (err, users) => {
         if (err) console.log(err);
         else { res.send(users); }
+    })
+})
+
+app.post('/comment', (req, res) => {
+    const itemsUser = req.body.itemsUser;
+    const itemID = req.body.itemID;
+    const comment = req.body.comment;
+
+    User.findOne({
+        userName: itemsUser,
+        'items._id': req.body.itemID
+    }).then((user) => {
+        const item = user.items.find(((elem) => {
+            return elem._id.toString() === itemID;
+        }))
+        item.comments.push(comment);
+        user.save()
+            .then(res.send(user))
     })
 })
 
