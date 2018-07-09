@@ -8,6 +8,7 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const expressValidator = require('express-validator');
+const User = require('./models/User');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -38,15 +39,16 @@ var imageUpload = multer({
     })
 });
 
-const Schema = mongoose.Schema;
+// DB config and setup
+const db = require('./config/keys').mongoURI;
+
+mongoose.connect(db)
+    .then(() => console.log('MongoDB connected...'))
+    .catch(err => console.log(err));
 
 
-const DB_USER = 'admin';
-const DB_PASSWORD = '9323Kenzie';
-const DB_URI = 'ds219191.mlab.com:19191';
-const dbName = 'barter-mac';
 
-
+<<<<<<< HEAD
 mongoose.connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URI}/${dbName}`);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -71,6 +73,8 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema)
 
+=======
+>>>>>>> 6cf1f585960ffc6d0fea68d9e1b99efa1ad21cfd
 app.post('/register', (req, res) => {
     const inputUsername = req.body.username;
     const inputPassword = req.body.password;
@@ -113,8 +117,7 @@ app.post('/login', (req, response) => {
                 if (err) response.send(err);
                 if (result) {
                     jwt.sign({ password: docs[0].password }, 'secretkey', (err, token) => {
-                        if (err) {
-                            response.send(err);
+                        if (err) { response.send(err);
                         } else {
                             response.send(JSON.stringify({ 'token': token, 'success': true }));
                         }
@@ -127,16 +130,20 @@ app.post('/login', (req, response) => {
 
 app.post('/upload', imageUpload.single('myFile'), (req, res) => {
 
+    console.log(req.body.itemName);
+
     const userSubmitting = req.body.user;
     const imageLocation = req.file.location;
     const imageDescription = req.body.description;
     const imageName = req.file.originalname.replace(/\.[^/.]+$/, "");
+    const itemName = req.body.itemName;
 
 
     User.findOneAndUpdate({ userName: userSubmitting }, {
         $push: {
             "items": {
-                itemName: imageName,
+                itemName,
+                imageName: imageName,
                 imageURL: imageLocation,
                 timestamp: Date.now(),
                 description: imageDescription
